@@ -1,21 +1,27 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
-		<title>Redirecionando...</title>
-	</head>
-	<body>
-		<h1>Aperte o botão abaixo para ser redirecionado à autenticação.</h1>
-		<hr />
-		<br />
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Redirecionando...</title>
+  </head>
+  <body>
+    <h1>Aperte o botão abaixo para ser redirecionado à autenticação.</h1>
+    <hr />
+    <br />
 
-		<button onclick="redirect()">Get Started</button>
-		<script>
-			function redirect() {
-				window.location.href = "https://accounts.spotify.com/authorize";
-			}
-		</script>
-	</body>
+    <button onclick="redirect()">Get Started</button>
+    <script>
+      const clientID = "4df23038d604477cb9499f57c4f7a64d"
+      const URI = encodeURIComponent("http://localhost:3000/callback")
+
+      function redirect() {
+        window.location.href =
+          "https://accounts.spotify.com/authorize" +
+          `?client_id=${clientID}&response_type=code&redirect_uri=${URI}` +
+          "&scope=playlist-read-private%20playlist-modify-public%20playlist-modify-private&state=34fFs29kd09"
+      }
+    </script>
+  </body>
 </html>
