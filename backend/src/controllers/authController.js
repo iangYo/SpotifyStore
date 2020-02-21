@@ -1,21 +1,42 @@
 const axios = require('axios');
+const qs = require('qs');
 
 module.exports = {
-	async index(req, res) {
-		const clientID = '4df23038d604477cb9499f57c4f7a64d';
-		const URI = 'http%3A%2F%2Flocalhost%3A3000%2F';
-
-		const response = await axios.get(
-			`https://accounts.spotify.com/authorize?client_id=${clientID}
-			&response_type=code&redirect_uri=${URI}&scope=playlist-read-private
-			%20playlist-modify-public%20playlist-modify-private&state=34fFs29kd09`);
-
-		// console.log(response.data);
-
-		return res.json({ ok: true });
+	show(req, res) {
+		return res.render('index');
 	},
 
-	auth(req, res) {
-		return res.render('index', { error: null, success: null });
+	callback(req, res) {
+		this.code = req.query.code;
+
+		if (!this.code) return res.send({error: "Missing code"});
+
+		res.redirect('/catchToken');
+	},
+
+	async catchToken(req, res, next) {
+		const url = 'https://accounts.spotify.com/api/token';
+		const encoded = `Basic ` + Buffer.from('4df23038d604477cb9499f57c4f7a64d:4b50f07ab6a1428a97cfc862306b115d').toString('base64');
+
+		if (!this.code) return res.send({ error: "Missing code" });
+
+		const data = qs.stringify({
+			grant_type: "authorization_code",
+			code: this.code,
+			redirect_uri: "http://localhost:3000/callback"
+		});
+
+		const config = {
+			headers: {
+				"Content-Type": "application/x-www-form-urlencoded",
+				"Authorization": encoded
+			}
+		};
+
+		await axios.post(url, data, config).then(response => {
+			console.log(response.data);
+		}).catch(err => {
+			next(err);
+		});
 	}
-};
+}
